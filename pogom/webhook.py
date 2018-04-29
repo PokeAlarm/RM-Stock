@@ -186,6 +186,14 @@ def __wh_future_completed(future):
 
         if exc:
             log.warning("Something's wrong with your webhook: %s.", exc)
+            return
+
+        # Verify Status Code
+        response = future.result()
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as ex:
+        log.warning(
+          'Unexpected response from webhook %s: %s.', response.url, ex)
     except Exception as ex:
         log.exception('Unexpected exception in exception info: %s.', ex)
 
