@@ -70,7 +70,7 @@ def wh_updater(args, queue, key_caches):
         key_caches[key] = LFUCache(maxsize=args.wh_lfu_size)
 
     # Prepare to send data per timed message frames instead of per object.
-    frame_interval_sec = (args.wh_frame_interval / 1000)
+    frame_interval_sec = (args.wh_frame_interval / 1000.0)
     frame_first_message_time_sec = default_timer()
     frame_messages = []
     first_message = True
