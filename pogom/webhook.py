@@ -29,11 +29,8 @@ def send_to_webhooks(args, session, message_frame):
         try:
             # Disable keep-alive and set streaming to True, so we can skip
             # the response content.
-            future = session.post(w, json=message_frame,
-                                  timeout=(connect_timeout, read_timeout),
-                                  background_callback=__wh_request_completed,
-                                  headers={'Connection': 'close'},
-                                  stream=True)
+            future = session.post(
+                w, json=message_frame, timeout=(connect_timeout, read_timeout))
             future.add_done_callback(__wh_future_completed)
         except requests.exceptions.ReadTimeout:
             log.exception('Response timeout on webhook endpoint %s.', w)
@@ -191,12 +188,6 @@ def __wh_future_completed(future):
             log.warning("Something's wrong with your webhook: %s.", exc)
     except Exception as ex:
         log.exception('Unexpected exception in exception info: %s.', ex)
-
-
-# Background handler for completed webhook requests from requests lib.
-def __wh_request_completed(sess, resp):
-    # Instantly close the response to release the connection back to the pool.
-    resp.close()
 
 
 def __get_key_fields(whtype):
